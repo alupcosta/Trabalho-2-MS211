@@ -1,71 +1,56 @@
-# Trabalho Avaliativo 2 – MS211 Cálculo Numérico
+# Carga total da doença: integração numérica
 
-Modelo SIR: solução numérica de EDOs, diferenciação numérica e integração numérica.
+## Dados
 
-**Universidade Estadual de Campinas (UNICAMP) – IMECC**
-**Docente:** Profa. Petra M. Bartmeyer
+| Dia | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| I | 3 | 7 | 22 | 78 | 233 | 300 | 256 | 233 | 189 | 128 | 72 | 33 | 11 | 6 |
 
-**Integrantes:**
-- Ana Luiza Paro Costa (RA 249728)
-- Karen Rosas Ketelhute Sampaio (RA 174537)
-- Iago Lucini da Silva (RA 281244)
+## Trapézios
 
-## Descrição
+### Regra dos Trapézios Repetida
 
-Este repositório reúne os códigos do Trabalho Avaliativo 2, que estuda um surto de gripe em uma comunidade escolar de N = 763 alunos (dados de infectados ao longo de 14 dias) a partir do modelo SIR.
+- **Intervalo:** [1, 14]
+- **Subintervalos:** n = 13
+- **Passo:** h = 1
+- **Extremos:** I₀ = 3, Iₙ = 6
+- **Soma dos pontos internos:** 1562
 
-| Questão | Tema | Arquivo |
-|---------|------|---------|
-| 1 | Euler explícito e RK4 para o sistema SIR | `<arquivo_q1>` |
-| 2 | Diferenças finitas centradas e pico da epidemia | `<arquivo_q2>` |
-| 3 | Integração numérica (Trapézios e Simpson 1/3 repetidas) | `<arquivo_q3>.py` |
+$$\frac{1}{2} \left[3 + 2 \cdot 1562 + 6\right] = 1566.5$$
 
-## Requisitos
+**Resultado:** 1566.5 indivíduos-dia
 
-- Python 3.8 ou superior
-- Não há dependências externas no código da Questão 3 (usa apenas a biblioteca padrão, módulo `csv`)
+## Simpson 1/3
 
-## Como rodar
+**Observação:** o número de subintervalos da amostra é ímpar, então o Simpson não se aplica a todo o intervalo.
+Aplicamos Simpson em [2, 14] e Trapézio simples em [1, 2].
 
-1. Clone o repositório e entre na pasta:
+### Simpson 1/3 Repetida no trecho [2, 14]
 
-   ```bash
-   git clone <url-do-repositorio>
-   cd <nome-do-repositorio>
-   ```
+- **Intervalo:** [2, 14]
+- **Subintervalos:** n = 12 (par)
+- **Passo:** h = 1
+- **Extremos:** I₀ = 7, Iₙ = 6
+- **Soma dos ímpares:** 783
+- **Soma dos pares:** 772
 
-2. Garanta que o arquivo `tabela.csv` esteja na **mesma pasta** do script, com duas linhas separadas por vírgula: a primeira com os dias e a segunda com a contagem de infectados.
+$$\frac{1}{3} \left[7 + 4 \cdot 783 + 2 \cdot 772 + 6\right] = 1563$$
 
-   ```csv
-   1,2,3,4,5,6,7,8,9,10,11,12,13,14
-   3,7,22,78,233,300,256,233,189,128,72,33,11,6
-   ```
+**Resultado:** 1563 indivíduos-dia
 
-3. Execute o script:
+### Trapézio simples no trecho restante [1, 2]
 
-   ```bash
-   python <arquivo_q3>.py
-   ```
+$$\frac{1}{2} \left[3 + 7\right] = 5$$
 
-### Questão 3 – Integração numérica
+**Resultado:** 5 indivíduos-dia
 
-O script lê `tabela.csv` e imprime, nesta ordem, o valor da integral de I(t) no intervalo [1, 14] (indivíduos-dia):
+**Total (Simpson + Trapézio):** 1563 + 5 = **1568 indivíduos-dia**
 
-1. **Regra dos Trapézios Repetida**, usando todos os 14 pontos (13 subintervalos).
-2. **Regra de Simpson 1/3 Repetida**, que exige número par de subintervalos. Como os 14 pontos geram 13 subintervalos (ímpar), a regra é aplicada aos pontos de t = 2 a t = 14 (12 subintervalos), ou seja, `dias[1:]`, `I[1:]` e `n-1`.
+## Comparação
 
-### Questões 1 e 2
-
-<!-- Preencher com as instruções de execução e dependências (ex.: numpy, matplotlib) -->
-
-## Estrutura do repositório
-
-```
-.
-├── tabela.csv        # Dados amostrais de infectados (Tabela 1)
-├── <arquivo_q1>      # Questão 1
-├── <arquivo_q2>      # Questão 2
-├── <arquivo_q3>.py   # Questão 3
-├── relatorio/        # Relatório em LaTeX
-└── README.md
-```
+| Método | ∫ I dt (indivíduos-dia) |
+|---|---|
+| Trapézios repetida | 1566.5 |
+| Simpson 1/3 repetida (com ajuste) | 1568 |
+| **Diferença absoluta** | 1.5 |
+| **Diferença relativa** | 0.10% |
