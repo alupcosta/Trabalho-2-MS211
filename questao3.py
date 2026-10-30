@@ -31,8 +31,9 @@ def simpson(dias, I, n):
 def simpson_com_ajuste(dias, I, n):
     if n % 2 == 0:
         S = simpson(dias, I, n)
-        return {"ajustado": False, "simpson": S, "trapezio": None, "total": S["valor"]}
+        return {"ajustado": False, "simpson": S, "trapezio": None, "total": S["valor"], "fim": None}
 
+    # Ajuste no início
     S = simpson(dias[1:], I[1:], n - 1)
     h = dias[1] - dias[0]
     T = {
@@ -40,9 +41,25 @@ def simpson_com_ajuste(dias, I, n):
         "I0": I[0], "I1": I[1],
         "valor": (h / 2) * (I[0] + I[1]),
     }
+
+    # Ajuste no fim
+    S_fim = simpson(dias[:n], I[:n], n - 1)
+    h_fim = dias[n] - dias[n - 1]
+    T_fim = {
+        "a": dias[n - 1], "b": dias[n], "h": h_fim,
+        "I0": I[n - 1], "I1": I[n],
+        "valor": (h_fim / 2) * (I[n - 1] + I[n]),
+    }
+
     return {
         "ajustado": True,
         "simpson": S,
         "trapezio": T,
         "total": S["valor"] + T["valor"],
+        "fim": {
+            "ajustado": True,
+            "simpson": S_fim,
+            "trapezio": T_fim,
+            "total": S_fim["valor"] + T_fim["valor"],
+        },
     }

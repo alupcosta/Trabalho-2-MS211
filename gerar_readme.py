@@ -1,12 +1,11 @@
 # =====================================================================
-# DECLARAÇÃO DE USO DE INTELIGÊNCIA AI
+# DECLARAÇÃO DE USO DE INTELIGÊNCIA ARTIFICIAL
 # Este arquivo foi gerado 100% com auxílio de inteligência artificial
-# a partir de instruções e do código-base fornecidos pelos autores.
-# Ele é responsável apenas pela formatação do README (Markdown)
-# e não contém a lógica numérica.
-# Os autores revisaram e validaram a saída gerada.
+# (Claude, da Anthropic), a partir de instruções e do código-base
+# fornecidos pelos autores. Ele é responsável apenas pela formatação
+# do README (Markdown) e não contém a lógica numérica, que está em
+# questao3.py. Os autores revisaram e validaram a saída gerada.
 # =====================================================================
-
 from questao3 import carregar_dados, trapezio, simpson_com_ajuste
 
 ARQUIVO_SAIDA = "README.md"
@@ -74,19 +73,48 @@ Aplicamos Simpson em [{S['a']}, {S['b']}] e Trapézio simples em [{T['a']}, {T['
 """
 
 
-def md_comparacao(T, S):
-    diff = abs(S - T)
-    rel = 100 * diff / S
-    return f"""| Método | ∫ I dt (indivíduos-dia) |
-|---|---|
-| Trapézios repetida | {T:g} |
-| Simpson 1/3 repetida (com ajuste) | {S:g} |
-| **Diferença absoluta** | {diff:g} |
-| **Diferença relativa** | {rel:.2f}% |
-"""
+def nome_variante(r):
+    if not r["ajustado"]:
+        return "Simpson 1/3 repetida"
+    S, T = r["simpson"], r["trapezio"]
+    return (f"Simpson 1/3 em [{S['a']}, {S['b']}] "
+            f"+ Trapézio em [{T['a']}, {T['b']}]")
 
 
-def montar_relatorio(dias, I, res_trap, res_simp):
+def md_comparacao(res_trap, variantes):
+    ref = res_trap["valor"]
+    linhas = [f"| Trapézios repetida | {ref:g} | — | — |"]
+    for r in variantes:
+        diff = abs(r["total"] - ref)
+        rel = 100 * diff / ref
+        linhas.append(f"| {nome_variante(r)} | {r['total']:g} | {diff:g} | {rel:.2f}% |")
+
+    texto = (
+        "| Método | ∫ I dt (indivíduos-dia) | Diferença absoluta | Diferença relativa |\n"
+        "|---|---|---|---|\n" + "\n".join(linhas) + "\n"
+    )
+
+    if len(variantes) == 2:
+        v1, v2 = variantes[0]["total"], variantes[1]["total"]
+        texto += (
+            f"\n**Sensibilidade à escolha do extremo:** as duas adaptações do Simpson "
+            f"diferem em {abs(v1 - v2):g} indivíduo-dia "
+            f"({100 * abs(v1 - v2) / ref:.2f}% em relação aos Trapézios).\n"
+        )
+    return texto
+
+
+def montar_relatorio(dias, I, res_trap, variantes):
+    if len(variantes) == 1:
+        secoes = f"## Simpson 1/3\n\n{md_simpson_com_ajuste(variantes[0])}\n"
+    else:
+        secoes = (
+            f"## Simpson 1/3: ajuste no início (trapézio em [{dias[0]}, {dias[1]}])\n\n"
+            f"{md_simpson_com_ajuste(variantes[0])}\n"
+            f"## Simpson 1/3: ajuste no fim (trapézio em [{dias[-2]}, {dias[-1]}])\n\n"
+            f"{md_simpson_com_ajuste(variantes[1])}\n"
+        )
+
     return f"""# Carga total da doença: integração numérica
 
 ## Dados
@@ -96,12 +124,10 @@ def montar_relatorio(dias, I, res_trap, res_simp):
 ## Trapézios
 
 {md_trapezio(res_trap)}
-## Simpson 1/3
-
-{md_simpson_com_ajuste(res_simp)}
+{secoes}
 ## Comparação
 
-{md_comparacao(res_trap['valor'], res_simp['total'])}"""
+{md_comparacao(res_trap, variantes)}"""
 
 
 def main():
@@ -111,8 +137,11 @@ def main():
     res_trap = trapezio(dias, I, n)
     res_simp = simpson_com_ajuste(dias, I, n)
 
+    # Se n é par, não há ajuste e só existe uma variante.
+    variantes = [res_simp, res_simp["fim"]] if res_simp["ajustado"] else [res_simp]
+
     with open(ARQUIVO_SAIDA, "w", encoding="utf-8") as f:
-        f.write(montar_relatorio(dias, I, res_trap, res_simp))
+        f.write(montar_relatorio(dias, I, res_trap, variantes))
 
     print(f"Arquivo {ARQUIVO_SAIDA} gerado.")
 
