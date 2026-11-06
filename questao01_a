@@ -1,0 +1,44 @@
+import numpy as np
+import pandas as pd
+
+N = 763  #população
+beta = 1.68  #transmissão
+gamma = 0.44  #remoção
+h = 0.1  #passo de integração (dias)
+t_max = 14  #tempo total (dias)
+
+# calcular o número de passos de integração
+n_steps = int(t_max / h) + 1
+# criar arrays para armazenar os valores de S, I e R ao longo do tempo
+t = np.linspace(0, t_max, n_steps)
+S = np.zeros(n_steps)
+I = np.zeros(n_steps)
+R = np.zeros(n_steps)
+
+# adicionar os valores iniciais no array
+S[0] = 762.0
+I[0] = 1.0
+R[0] = 0.0
+
+# Implementação do método de Euler
+for k in range(n_steps - 1):    # percorrer o array inteiro
+    dS = -beta * S[k] * I[k] / N
+    dI = (beta * S[k] * I[k] / N) - (gamma * I[k])
+    dR = gamma * I[k]
+
+    S[k + 1] = S[k] + h * dS
+    I[k + 1] = I[k] + h * dI
+    R[k + 1] = R[k] + h * dR
+
+#tabelas com dias inteiros - que nem a Tabela 1
+passo_dia = int(1 / h)  # A cada 10 passos de 0.1 dia obtém-se 1 dia inteiro
+# criar um DataFrame com os resultados
+df_euler = pd.DataFrame({
+    'Dia (t)': np.arange(0, 15),
+    'S(t)': S[::passo_dia],
+    'I(t)': I[::passo_dia],
+    'R(t)': R[::passo_dia],
+})
+
+# imprimir no terminal
+print(df_euler.to_string(index=False))
