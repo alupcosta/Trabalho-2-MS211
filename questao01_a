@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 N = 763  #população
 beta = 1.68  #transmissão
@@ -42,3 +43,19 @@ df_euler = pd.DataFrame({
 
 # imprimir no terminal
 print(df_euler.to_string(index=False))
+
+#Representação Gráfica
+plt.figure(figsize=(9, 5))
+plt.plot(t, S, 'r-', linewidth=2, label='S(t) - Suscetíveis')
+plt.plot(t, I, 'b-', linewidth=2, label='I(t) - Infectados')
+plt.plot(t, R, 'g-', linewidth=2, label='R(t) - Removidos')
+
+plt.title('Modelo SIR pelo Método de Euler Explícito (h = 0.1 dia)')
+plt.xlabel('Tempo (dias)')
+plt.ylabel('População (indivíduos)')
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+
+# Salva o gráfico
+plt.savefig('grafico_euler.png', dpi=300, bbox_inches='tight')
