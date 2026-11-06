@@ -1,0 +1,94 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+N = 763  #população
+beta = 1.68  #transmissão
+gamma = 0.44  #remoção
+h = 0.1  #passo de integração (dias)
+t_max = 14  #tempo total (dias)
+
+# valores iniciais no array
+S0 = 762.0
+I0 = 1.0
+R0 = 0.0
+
+def dSdt(S, I):
+    return -beta * S * I / N
+
+def dIdt(S, I):
+    return (beta * S * I / N) - (gamma * I)
+
+def dRdt(I):
+    return gamma * I
+
+
+n_steps = int(t_max / h) + 1  # 141 pontos discretos (de 0 a 14 com h=0.1)[cite: 44]
+t = np.linspace(0, t_max, n_steps)
+
+S = np.zeros(n_steps)
+I = np.zeros(n_steps)
+R = np.zeros(n_steps)
+
+# Atribuição dos valores em t = 0
+S[0], I[0], R[0] = S0, I0, R0
+
+
+# RK4
+for k in range(n_steps - 1):
+    # k1: Inclinação no início do intervalo (t_k, y_k)[cite: 109, 111]
+    k1_S = dSdt(S[k], I[k])
+    k1_I = dIdt(S[k], I[k])
+    k1_R = dRdt(I[k])
+
+    # k2: Primeiras estimativas no ponto médio (t_k + h/2)[cite: 108, 111]
+    S_mid1 = S[k] + 0.5 * h * k1_S
+    I_mid1 = I[k] + 0.5 * h * k1_I
+    k2_S = dSdt(S_mid1, I_mid1)
+    k2_I = dIdt(S_mid1, I_mid1)
+    k2_R = dRdt(I_mid1)
+
+    # k3: Segundas estimativas no ponto médio (t_k + h/2)[cite: 108, 111]
+    S_mid2 = S[k] + 0.5 * h * k2_S
+    I_mid2 = I[k] + 0.5 * h * k2_I
+    k3_S = dSdt(S_mid2, I_mid2)
+    k3_I = dIdt(S_mid2, I_mid2)
+    k3_R = dRdt(I_mid2)
+
+    # k4: Estimativas no final do intervalo (t_k + h)[cite: 109, 111]
+    S_end = S[k] + h * k3_S
+    I_end = I[k] + h * k3_I
+    k4_S = dSdt(S_end, I_end)
+    k4_I = dIdt(S_end, I_end)
+    k4_R = dRdt(I_end)
+
+    # Atualização por média ponderada de 4ª ordem[cite: 107, 111]
+    S[k + 1] = S[k] + (h / 6.0) * (k1_S + 2 * k2_S + 2 * k3_S + k4_S)
+    I[k + 1] = I[k] + (h / 6.0) * (k1_I + 2 * k2_I + 2 * k3_I + k4_I)
+    R[k + 1] = R[k] + (h / 6.0) * (k1_R + 2 * k2_R + 2 * k3_R + k4_R)
+
+# print dos resultados
+passo_dia = int(1 / h)  # A cada 10 passos de 0.1 dia obtém-se 1 dia inteiro
+
+df_rk4 = pd.DataFrame({
+    'Dia (t)': np.arange(0, 15),
+    'S(t)': S[::passo_dia],
+    'I(t)': I[::passo_dia],
+    'R(t)': R[::passo_dia],
+    'S+I+R': S[::passo_dia] + I[::passo_dia] + R[::passo_dia],
+})
+
+print(df_rk4.to_string(index=False, float_format=lambda x: f'{x:10.4f}'))
+
+#Saída gráfica
+plt.figure(figsize=(9, 5))
+plt.plot(t, S, 'r-', linewidth=2, label='S(t) - Suscetíveis')
+plt.plot(t, I, 'b-', linewidth=2, label='I(t) - Infectados')
+plt.plot(t, R, 'g-', linewidth=2, label='R(t) - Removidos')
+plt.title('Modelo SIR pelo Método de Runge-Kutta de 4ª Ordem (h = 0.1 dia)')
+plt.xlabel('Tempo (dias)')
+plt.ylabel('População (indivíduos)')
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.savefig('grafico_rk4.png', dpi=300, bbox_inches='tight')
