@@ -27,7 +27,7 @@ As ferramentas foram aplicadas para:
 3. Formatação e estruturação estética de tabelas e marcações Markdown.
 
 ### 3. Validação Humana e Autoria
-Todos os cálculos numéricos, equações teóricas, análises de convergência, escolha dos passos de integração $h$ e interpretações epidemiológicas foram revisados, testados e validados integralmente pelos autores humanos. Nenhuma etapa analítica ou lógica numérica foi aceita sem a devida verificação dos alunos responsáveis.
+Todos os cálculos numéricos, equações teóricas, análises de convergência, escolha dos passos de integração $h$ e interpretações epidemiológicas foram revisados pelos autores humanos. 
 
 # Explicação da Questão 02
 ## Carga total da doença: integração numérica
