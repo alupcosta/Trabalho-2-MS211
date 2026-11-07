@@ -2,16 +2,16 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-N = 763  #população
+populacao = 763  #população
 beta = 1.68  #transmissão
 gamma = 0.44  #remoção
 h = 0.1  #passo de integração (dias)
-t_max = 14  #tempo total (dias)
+t_total = 14  #tempo total (dias)
 
 # calcular o número de passos de integração
-n_steps = int(t_max / h) + 1
+n_steps = int(t_total / h) + 1
 # criar arrays para armazenar os valores de S, I e R ao longo do tempo
-t = np.linspace(0, t_max, n_steps)
+t = np.linspace(0, t_total, n_steps)
 S = np.zeros(n_steps)
 I = np.zeros(n_steps)
 R = np.zeros(n_steps)
@@ -23,8 +23,8 @@ R[0] = 0.0
 
 # Implementação do método de Euler
 for k in range(n_steps - 1):    # percorrer o array inteiro
-    dS = -beta * S[k] * I[k] / N
-    dI = (beta * S[k] * I[k] / N) - (gamma * I[k])
+    dS = -beta * S[k] * I[k] / populacao
+    dI = (beta * S[k] * I[k] / populacao) - (gamma * I[k])
     dR = gamma * I[k]
 
     S[k + 1] = S[k] + h * dS
