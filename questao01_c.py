@@ -1,3 +1,9 @@
+"""
+DECLARAÇÃO DE USO DE INTELIGÊNCIA ARTIFICIAL
+Estruturação e apoio intenso na integração dos scripts questao01_a.py e questao01_b.py 
+para plotagem e salvamento do gráfico comparativo.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 
