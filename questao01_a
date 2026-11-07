@@ -1,3 +1,10 @@
+"""
+DECLARAÇÃO DE USO DE INTELIGÊNCIA ARTIFICIAL — ITEM a) (Euler Explícito)
+Auxílio no suporte de sintaxe Python, estruturação do laço 
+iterativo com NumPy, filtragem tabular de dias inteiros via Pandas 
+e representação gráfica com matplot.
+"""
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
