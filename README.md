@@ -5,7 +5,7 @@
 O estudo analisa a propagação de um surto infeccioso em uma população fechada ($N = 763$) combinando resolução de EDOs, diferenciação numérica e integração definida.
 
 ## 🛠️ Estrutura do Repositório
-
+```
 ├── a.py               # Questão 1a: Método de Euler Explícito (h = 0.1)
 ├── b.py               # Questão 1b: Método de Runge-Kutta de 4ª Ordem - RK4 (h = 0.1)
 ├── c.py               # Questão 1c: Script comparativo entre Euler e RK4 (gera gráficos)
@@ -14,6 +14,7 @@ O estudo analisa a propagação de um surto infeccioso em uma população fechad
 ├── main.tex           # Código-fonte do relatório final em LaTeX (Overleaf)
 ├── references.bib     # Arquivo de referências BibTeX
 └── figures/           # Imagens e gráficos gerados pelos scripts (.png)
+```
 
 ## Declaração do uso de IA
 ### 1. Ferramentas Utilizadas
