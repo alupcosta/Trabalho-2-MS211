@@ -1,3 +1,10 @@
+"""
+DECLARAÇÃO DE USO DE INTELIGÊNCIA ARTIFICIAL 
+Suporte na codificação vetorial dos 4 coeficientes de 
+inclinação intermediários (k1, k2, k3, k4), estruturação da média ponderada.
+Auxílio na estruturação do laço de repetição e visualização gráfica com matplot 
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
